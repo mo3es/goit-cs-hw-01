@@ -1,19 +1,35 @@
 import sys
 import os
-path = os.path.dirname(__file__)
-path = os.path.join(path, 'programm_files')
-sys.path.append(path)
-import my_token
-import my_lexer
+
+path_to_program_files = os.path.join(os.path.dirname(__file__), 'program_files')
+sys.path.append(path_to_program_files)
+
+import my_lexer 
+import my_parser
+import my_interpreter
 
 
 def main():
-    text = '2 + 3^2*(4-1)**3 / 3'
-    lexer = my_lexer.Lexer(text)
-    token = lexer.get_next_token()
-    while token.token_type != my_token.MyTokenType.EOF:
-        print(token)
-        token = lexer.get_next_token()
+
+    while True:
+
+        try:
+            text = input('Enter expression (or enter "exit" to quit): ')
+
+            if text.lower() == 'exit':
+                print("The programm was finished by user`s request")
+                break
+
+            lexer = my_lexer.Lexer(text)
+            parser = my_parser.MyParser(lexer)
+            tree_root = parser.parse()
+            parser.print_parsing_tree(tree_root)
+            interpreter = my_interpreter.MyInterpreter(tree_root)
+            result = interpreter.interpret()
+            print(result)
+        except Exception as e:
+            print(e)
+
 
 if __name__ == "__main__":
     main()
